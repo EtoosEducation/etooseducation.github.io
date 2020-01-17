@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {% include head.html %}
+
+  <body>
+    <div class="gnb-wrap">
+      {% assign current = page.url | downcase | split: '/' %}
+      <nav class="nav">
+        <div class="nav-container ">
+            <ul class="etoos-logo-wrap">
+                <li>
+                    <a href="/">
+                        <img src="http://recruit.etoos.com/images/recruit/common/logo.gif" alt="etoos logo">
+                        <span>기술블로그</span>
+                    </a>
+                </li>   
+            </ul>
+            <ul class="blog-menu">
+                <li class="transition">
+                    <a href="{{ '/blog' | prepend: site.baseurl }}/" {% if current[1] == "blog" or current[1] == "recruit" or current[1] == "about" %} class="normal" {% endif %} class="active">ETOOS TECH</a>
+                </li>
+                <li class="transition">
+                    <a href="{{ '/recruit' | prepend: site.baseurl }}" {% if current[1] == "recruit" %} class="active"{% endif %} >Recruit</a>
+                </li>
+                <li class="transition">
+                    <a href="{{ '/about' | prepend: site.baseurl }}" {% if current[1] == "about" %} class="active"{% endif %} >About</a>
+                </li>
+            </ul>
+        </div>
+      </nav>
+    </div>
+
+    {% if page.post-header == true %}
+        {% include post-header.html %}
+    {% endif %}
+    {% if page.project-header == true %}
+        {% include project-header.html %}
+    {% endif %}
+      
+    <main>
+        {{ content }}
+        
+        {% if page.text == true %}
+            {% include share.html %}
+        {% endif %}
+
+    </main>
+      
+      {% include footer.html %}
+   
+  </body>
+</html>

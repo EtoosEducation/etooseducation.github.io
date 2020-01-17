@@ -1,0 +1,72 @@
+<li class="workplace transition">
+    {% for first in site.data.experience.first_recruit %}
+    <p class="workplace-name">
+        {{ first.name }}
+    </p>
+    <div class="work-info">
+        {% for recruitURL in site.data.experience.first_recruitURL %}
+            <p>
+                <span class="work-sub-info">{{recruitURL.career}}</span>
+                <a href="{{ recruitURL.url }}" target="_blank">
+                    {{recruitURL.explanation}}
+                </a>
+            </p>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</li>
+
+<li class="workplace transition">
+    {% for second in site.data.experience.second_recruit %}
+    <p class="workplace-name">
+        {{ second.name }}
+    </p>
+    <div class="work-info">
+        {% for recruitURL in site.data.experience.second_recruitURL %}
+            <p>
+                <span class="work-sub-info">{{recruitURL.career}}</span>
+                <a href="{{ recruitURL.url }}" target="_blank">
+                    {{recruitURL.explanation}}
+                </a>
+            </p>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</li>
+
+<li class="workplace transition">
+    {% for third in site.data.experience.third_recruit %}
+    <p class="workplace-name">
+        {{ third.name }}
+    </p>
+    <!--junior 생기면 padding삭제-->
+    <div class="work-info" style="padding-bottom:20px">
+        {% for recruitURL in site.data.experience.third_recruitURL %}
+            <p>
+                <span class="work-sub-info">{{recruitURL.career}}</span>
+                <a href="{{ recruitURL.url }}" target="_blank">
+                    {{recruitURL.explanation}}
+                </a>
+            </p>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</li>
+
+<li class="workplace transition">
+    {% for fourth in site.data.experience.fourth_recruit %}
+    <p class="workplace-name">
+        {{ fourth.name }}
+    </p>
+    <div class="work-info">
+        {% for recruitURL in site.data.experience.fourth_recruitURL %}
+            <p>
+                <span class="work-sub-info">{{recruitURL.career}}</span>
+                <a href="{{ recruitURL.url }}" target="_blank">
+                    {{recruitURL.explanation}}
+                </a>
+            </p>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</li>

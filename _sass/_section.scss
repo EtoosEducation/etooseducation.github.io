@@ -1,0 +1,85 @@
+
+section.explanation {
+    padding-top : 70px;
+
+    @media (max-width: $break-small) {
+        padding-top: 20px;
+    }
+    
+    h1.mainTitle {
+        font-family: $source, $san-serif;
+        font-size: 38px;
+        font-weight: bold;
+        color: #fff;
+        line-height: 1.17;
+        margin: 10px 0;
+    
+        @media (max-width: $break-small) {
+        font-size: 32px;
+        }
+        
+        @media (max-width: 550px) {
+            margin-bottom: 8px;
+        }
+    
+    }
+    
+    h2.subTitle {
+        font-size: 30px;
+        font-weight: 400;
+        font-family: $san-serif;
+        line-height: 1.4;
+        color: #fff;
+        word-wrap: normal;
+    
+        @media (max-width: $break-small) {
+        font-size: 24px;
+        }    
+        
+    }
+    
+    p.body {
+        font-size: 16px;
+        color: $grey-0;
+        line-height: 1.75;
+        margin: 20px 0 64px 0;
+    }
+    
+    .intro-link:hover
+    .underline-mask {
+        transform: scaleX(1);
+//        transform-origin: 0% 0%;
+        @media (max-width: $break-small) {
+            transform: none;
+        }
+    }
+
+    .etoos-recruitBt {
+        display: inline-block;
+        width: 100px;
+        height: 40px;
+        border-radius: 50px;
+        padding: 6px;
+        margin-top: 5px;
+        background-color: #8dc63f;
+        text-align: center;
+        transition: background 0.2s ease;
+        a{
+            color: #fff;
+            font-size: 15px;
+            font-weight: bold;
+            line-height: 15px;
+        }
+    }
+    
+    .etoos-recruitBt:hover
+    a {
+        cursor: pointer;
+        color: $grey-0;
+        
+        @media (max-width: $break-small) {
+            color: $grey-0;
+        }
+    }
+    
+}

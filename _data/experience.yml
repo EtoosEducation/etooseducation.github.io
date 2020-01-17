@@ -1,0 +1,40 @@
+first_recruit:
+- name: Web & Server Developer
+
+first_recruitURL:
+- career: Junior
+  explanation : 신입 또는 4년 미만
+  url : http://recruit.etoos.com/recruit/viewRecruitApply.do?recruit_id=5600
+- career: Senior
+  explanation : 4년 이상 8년 이하
+  url : http://recruit.etoos.com/recruit/viewRecruitApply.do?recruit_id=5601
+
+second_recruit:
+- name: Database Administrator
+
+second_recruitURL:
+- career: Junior
+  explanation : 신입 또는 4년 미만
+  url : http://recruit.etoos.com/recruit/viewRecruitApply.do?recruit_id=5602
+- career: Senior
+  explanation : 4년 이상 8년 이하
+  url : http://recruit.etoos.com/recruit/viewRecruitApply.do?recruit_id=5603
+
+third_recruit:
+- name: Machine Learning & AI(Data professional)
+
+third_recruitURL:
+- career: Senior
+  explanation : 4년 이상 8년 이하
+  url : http://recruit.etoos.com/recruit/viewRecruitApply.do?recruit_id=5604
+
+fourth_recruit:
+- name: Mobile Developer
+
+fourth_recruitURL:
+- career: Junior
+  explanation : 신입 또는 4년 미만
+  url : http://recruit.etoos.com/recruit/viewRecruitApply.do?recruit_id=5605
+- career: Senior
+  explanation : 4년 이상 8년 이하
+  url : http://recruit.etoos.com/recruit/viewRecruitApply.do?recruit_id=5606
