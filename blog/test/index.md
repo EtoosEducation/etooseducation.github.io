@@ -3,10 +3,10 @@ layout: post
 title:  "ETOOS 기술블로그 개설 Story"
 subtitle: "기술블로그 개설을 위한 조사와 개설 과정 정리"
 type: "Development"
-blog: true
-text: true
+blog: false
+text: false
 author: "작성자"
-post-header: true
+post-header: false
 order: 0
 ---
 

@@ -7,7 +7,7 @@ blog: true
 text: true
 author: "남희성"
 post-header: true
-order: 1
+order: 3
 ---
 # AWS re:Invent 2019 후기
 
