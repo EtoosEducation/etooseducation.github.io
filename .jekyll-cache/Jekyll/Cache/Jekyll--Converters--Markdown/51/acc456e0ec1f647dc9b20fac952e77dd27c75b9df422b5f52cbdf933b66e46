@@ -1,0 +1,133 @@
+I"<ul class="catalogue">
+
+
+
+<li class="catalogue-item">
+    <a href="/blog/slowQuery_Tunning/">
+        
+        
+        <p class="catalogue-type">
+            Development
+        </p>
+        <div class="catalogue-info transition">
+            <h1 class="catalogue-title">
+                서비스 성능 개선 사례
+            </h1>
+            <p class="catalogue-sub">
+                DB Tuning
+            </p>
+            <p class="catalogue-body">
+                준비 중 입니다.
+
+            </p>
+        </div>
+    </a>
+</li>   
+
+
+
+<li class="catalogue-item">
+    <a href="/blog/etoos_arrangement/">
+        
+        
+        <p class="catalogue-type">
+            Development
+        </p>
+        <div class="catalogue-info transition">
+            <h1 class="catalogue-title">
+                20년도 ETOOS 배치표 서비스 개편
+            </h1>
+            <p class="catalogue-sub">
+                AS-IS, TO-BE &amp; TO-DO
+            </p>
+            <p class="catalogue-body">
+                20년도 배치표 서비스 개편 AS-IS, TO-BE &amp; TO-DO 안녕하세요. 강산이 한번 변하고 교육과정이 두 번 변하는 동안 배치표 업무를 맡고 있는 이지환입니다. 2020학년도...
+            </p>
+        </div>
+    </a>
+</li>   
+
+
+
+<li class="catalogue-item">
+    <a href="/blog/aws_reInvent/">
+        
+        
+        <p class="catalogue-type">
+            Development
+        </p>
+        <div class="catalogue-info transition">
+            <h1 class="catalogue-title">
+                AWS re:Invent 2019 후기
+            </h1>
+            <p class="catalogue-sub">
+                Las Vegas re:Invent 행사 다녀온 후기
+            </p>
+            <p class="catalogue-body">
+                # AWS re:Invent 2019 후기 2019년 한 해, 이투스는 모든 시스템을 AWS 클라우드로 전환했습니다. 저에게 2009년 쯤 대학교에서 처음 접했던 AWS는 클라우드라는 흐릿한 개념과...
+            </p>
+        </div>
+    </a>
+</li>   
+
+
+
+<li class="catalogue-item">
+    <a href="/blog/S3_filegateway/">
+        
+        
+        <p class="catalogue-type">
+            Development
+        </p>
+        <div class="catalogue-info transition">
+            <h1 class="catalogue-title">
+                Classic ASP 소스수정없이 S3 사용하기
+            </h1>
+            <p class="catalogue-sub">
+                using FileGateway
+            </p>
+            <p class="catalogue-body">
+                Classic ASP 소스수정없이 S3 사용하기 using FileGateway 안녕하세요. TechLab에서 문제은행 고도화 프로젝트를 담당하고 있는 이병철 입니다. 최근에 AS-IS 시스템 일부를 On-Premise에서 클라우드(AWS)로 전환시키려고...
+            </p>
+        </div>
+    </a>
+</li>   
+
+
+
+<li class="catalogue-item">
+    <a href="/blog/techtalk_1st/">
+        
+        
+        <p class="catalogue-type">
+            Development
+        </p>
+        <div class="catalogue-info transition">
+            <h1 class="catalogue-title">
+                ETOOS Tech Talk
+            </h1>
+            <p class="catalogue-sub">
+                첫번째 이투스 기술 세미나
+            </p>
+            <p class="catalogue-body">
+                이투스교육 첫번째 기술 세미나인 ‘ETOOS Tech Talk‘을 진행하였습니다. Tech Talk은 분기별 1회 진행하는데 이번 세미나는 1월 29일 이투스교육 서초사옥 B1층에서 열렸습니다. ETOOS Tech Talk은...
+            </p>
+        </div>
+    </a>
+</li>   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</ul>
+:ET
