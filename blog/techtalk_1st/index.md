@@ -3,10 +3,10 @@ layout: post
 title:  "ETOOS Tech Talk"
 subtitle: "첫번째 이투스 기술 세미나"
 type: "Development"
-blog: true
-text: true
+blog: false
+text: false
 author: "백민지"
-post-header: true
+post-header: false
 order: 1
 ---
 이투스교육 첫번째 기술 세미나인  '**ETOOS Tech Talk**'을 진행하였습니다. Tech Talk은 분기별 1회 진행하는데 이번 세미나는 1월 29일 이투스교육 서초사옥 B1층에서 열렸습니다.
@@ -94,4 +94,4 @@ order: 1
 
 자리를 빛내주신 참석자 분들과 세션을 발표한 세분께도 유익한 시간이 되었기를 바랍니다.
 
-![img7](img/smile.jpg)
+![img7]<img src="img/smile.jpg" width="40%" height="30%" alt="5.png">
