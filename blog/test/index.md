@@ -5,9 +5,9 @@ subtitle: "기술블로그 개설을 위한 조사와 개설 과정 정리"
 type: "Development"
 blog: false
 text: false
-author: "작성자"
-post-header: false
-order: 0
+author: "이혜원"
+post-header: true
+order: 1
 ---
 
 # ETOOS 기술블로그 만들기 과정

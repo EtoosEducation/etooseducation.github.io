@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>ElasticCache(Redis) 제대로 알고 사용하자</title>
+    
+<!-- Post info -->
+
+  <meta property="og:site_name" content="Etoos Technical">
+
+    <meta property="fb:app_id"          content="1607605225977118" />
+    <meta property="og:type"            content="article" /> 
+    <meta property="og:url"             content="http://localhost:4000/blog/7_ElasticCache_used/" />
+    
+    <meta property="og:image" content="http://localhost:4000/blog/7_ElasticCache_used/">
+
+    <meta name="twitter:card" content="summary_large_image"> 
+    
+    <!-- title -->
+    <meta property="og:title" content="ElasticCache(Redis) 제대로 알고 사용하자">
+    
+    <meta name="twitter:title" content="ElasticCache(Redis) 제대로 알고 사용하자">
+    
+    <!-- description -->
+    <meta property="og:description" content="AWS 레디스를 사용하고 있는데 뜬금없이 OOM이 발생했다고 알림을 받았고 당황한 적이 있습니다. 보통은 TTL을 설정해서 해결을 하고 있긴 한데 사용량 측정을 잘못했나? 할정도로 용량이 꽉차서 급하게 Flushall 을 했네요. 그래서..."/>
+    
+    <meta name="twitter:description" content="AWS 레디스를 사용하고 있는데 뜬금없이 OOM이 발생했다고 알림을 받았고 당황한 적이 있습니다. 보통은 TTL을 설정해서 해결을 하고 있긴 한데 사용량 측정을 잘못했나? 할정도로 용량이 꽉차서 급하게 Flushall 을 했네요. 그래서...">
+    
+  <!-- CSS -->
+  <link rel="stylesheet" href="/styles.css">
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700" rel="stylesheet">
+  <link rel="shortcut icon" href="https://img.etoos.com/teacher/event/2018/04/pmo_00/favicon.ico">
+    
+  <!-- GA -->
+   <script async="" src="https://www.google-analytics.com/analytics.js"></script>
+    
+   <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-86397112-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-2080815546000293",
+      enable_page_level_ads: true
+    });
+  </script>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-156443666-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-156443666-1');
+  </script>
+
+</head>
+
+
+  <body>
+    <div class="gnb-wrap">
+      
+      <nav class="nav">
+        <div class="nav-container ">
+            <ul class="etoos-logo-wrap">
+                <li>
+                    <a href="/">
+                        <img src="http://recruit.etoos.com/images/recruit/common/logo.gif" alt="etoos logo">
+                        <span>기술블로그</span>
+                    </a>
+                </li>   
+            </ul>
+            <ul class="blog-menu">
+                <li class="transition">
+                    <a href="/blog/"  class="normal"  class="active">ETOOS TECH</a>
+                </li>
+                <li class="transition">
+                    <a href="/recruit"  >Recruit</a>
+                </li>
+                <li class="transition">
+                    <a href="/about"  >About</a>
+                </li>
+            </ul>
+        </div>
+      </nav>
+    </div>
+
+    
+        <div class="post-header loading-animation" style="background-image: url('')">
+    <div id="etoos-main-banner">
+        <section class="explanation">
+            <h2 class="subTitle">Etoos Tech Blog</h2>
+            <h1 class="mainTitle">이투스와 나눠요.</h1>
+            <div class="etoos-recruitBt">
+                <a class="transition" href="/recruit">
+                    지원하기
+                </a>
+            </div>
+        </section>
+    </div>
+</div>
+    
+    
+      
+    <main>
+        <div class="post">
+    <div class="post-info">
+        <div class="post-type-tag">
+            
+            <div class="post-type">
+                Development
+            </div>
+        </div>
+        <!-- <h1 class="post-title">
+            ElasticCache(Redis) 제대로 알고 사용하자
+        </h1>
+        <h2 class="post-subtitle">
+            ElasticCache(Redis) 제대로 알고 사용하자
+        </h2> -->
+    </div>
+    
+<!--포트폴리오 상단 정보-->
+    
+    
+
+<!--draft 일 때-->
+    
+    
+    
+<!--큐레이션 영역-->
+    <p>AWS 레디스를 사용하고 있는데 뜬금없이 OOM이 발생했다고 알림을 받았고 당황한 적이 있습니다. 
+보통은 TTL을 설정해서 해결을 하고 있긴 한데 사용량 측정을 잘못했나? 할정도로 용량이 꽉차서 급하게 Flushall 을 했네요. 
+그래서 궁금증을 못참고 레디스에 대한 스트레스 테스트를 하기로 마음을 먹었습니다.</p>
+
+<blockquote>
+  <p>안녕하세요. DX혁신부문 학원솔루션개발팀에 이병철입니다. :)<br />
+AWS Elastic Cache를 이용하고 있는 도중에 OOM이 발생하는 사건을 계기로 Redis를 좀더 분석해볼필요가 있다라고 판단했습니다.<br />
+많은걸 분석할시간이 부족하여 부하테스트 위주로 작업을 진행했습니다.</p>
+</blockquote>
+
+<h2 id="개요">개요</h2>
+
+<ul>
+  <li>Redis Error OOM(Out of memory) 발생</li>
+  <li>Session key 저장하면서 TTL 설정이 일부 안된걸로 파악</li>
+</ul>
+
+<h3 id="장애">장애</h3>
+
+<p><img src="img/2020-09-17-01.png" alt="photo1" />
+<img src="img/2020-09-17-02.png" alt="photo2" />
+<img src="img/2020-09-17-03.png" alt="photo3" />
+<img src="img/2020-09-17-04.png" alt="photo4" />
+<img src="img/2020-09-17-05.png" alt="photo5" /></p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left"> </th>
+      <th style="text-align: center">3월4일 (장애시점)</th>
+      <th style="text-align: center">2월28일 (최대치)</th>
+      <th style="text-align: center">비고</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">잔여메모리</td>
+      <td style="text-align: center">239M</td>
+      <td style="text-align: center">243M</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">사용개수</td>
+      <td style="text-align: center">39,152</td>
+      <td style="text-align: center">119,500</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">캐시사용</td>
+      <td style="text-align: center">436M</td>
+      <td style="text-align: center">436M</td>
+      <td style="text-align: center"> </td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>* 어플리케이션 로그에 OOM으로 나와서 메모리 사용량을 봐도 3월4일에 239M 여유가 있음. (비교, 2월28일에 최대사용갯수 기준으로 243M 여유)
+* 레디스 키발행과 회수에 관한 로직 문제점이 없어 보임. 
+* 과도한 스왑사용으로 인한 오류라고 보기엔 스왑범위가 너무 작음 (23M)
+</code></pre></div></div>
+
+<blockquote>
+  <ul>
+    <li>메모리가 여유가 있는데 왜 시스템이 멈출까?</li>
+    <li>2월28일에 최대로 사용했는데 그때는 문제가 왜 없었지?</li>
+  </ul>
+
+  <p>위에 두가지 궁금증이 발생했습니다. 그래서 AWS Tam 에게 도움을 요청했고 다음과 같은 답변을 받았습니다.</p>
+</blockquote>
+
+<h2 id="aws-qa">AWS Q&amp;A</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1차 문의  
+Q : 메모리 여유가 있는데 왜 시스템이 멈췄을까요?
+A : 581M 메모리중에 예약메모리 25%를 제외한 436M까지 사용이 가능합니다.  
+예약메모리의 경우 새로운 키를 작성하는데 사용하는데 한계에 도달할 경우 예전에 만들어 놓은 키를 제거하거나 TTL이 없는 키를 제거합니다.  
+다만 위 전제조건에 일치하는 키가 없을경우 OOM 오류를 반환합니다. 
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>2차 문의  
+Q : CloudWatch 에서 특정인계치에 도달했을경우 Lambda를 이용해서 Flush 하는건 괜찮을까?
+A : 권장하지 않음. 모니터링 지표로 보아 T3.medium 권장, MaxMemory-policy 를 검토하여 수치를 조절할것
+
+Q : HA(replica) 구성을 했을경우 Master node에 OOM이 발생했을 경우 Slave node 가 Master node로 승격되어 이행할수 있을까?
+A : replica 구조에서 Slave node (승격후)에 쓰기시도시 OOM 발생할수 있음.
+</code></pre></div></div>
+
+<h3 id="aws-제안">AWS 제안</h3>
+
+<ul>
+  <li>Max Memory-policy 정책변경 (volatile-lfu -&gt; allkeys-random)</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">옵션</th>
+      <th style="text-align: left">설명</th>
+      <th style="text-align: center">비고</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">volatile-lfu</td>
+      <td style="text-align: left">가장 적게 액세스한 키부터 시작해 만료가 <br /> 설정된 키 하나를 제거하여 공간 확보</td>
+      <td style="text-align: center">기본</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">allkeys-lru</td>
+      <td style="text-align: left">최근 사용한 키를 먼저 제거하여 공간 확보</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">allkeys-random</td>
+      <td style="text-align: left">무작위로 키를 제거하여 공간 확보</td>
+      <td style="text-align: center">권장</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">volatile-random</td>
+      <td style="text-align: left">만료가 설정된 무작위 키를 제거하여 공간 확보</td>
+      <td style="text-align: center">권장</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">allkeys-lfu</td>
+      <td style="text-align: left">가장 적게 액세스한 키를 제거하여 공간 확보</td>
+      <td style="text-align: center"> </td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li>예약 메모리 비율 (reserved-memory-percent) 조정(단, 단독구성시 필요없음)</li>
+  <li>데이터 수명주기 정책 (TTL이 만료되어 학제되는 속도 &lt; 데이터쓰기속도 = OOM발생 )</li>
+</ul>
+
+<blockquote>
+  <p>이런 설정이 있었는지 처음에 몰라서 문의사항 및 제안 방식에 따라서 써보려고 했습니다.<br />
+근데 진짜 저렇게 했을때 이슈가 없을까? 라는 의구심이 들기 시작했죠. 
+그래서 테스트계획을 하고 테스트 진행을 하기로 했습니다.</p>
+</blockquote>
+
+<h2 id="test">Test</h2>
+
+<h4 id="테스트설정">테스트설정</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">구성</th>
+      <th style="text-align: center">사양</th>
+      <th style="text-align: center">복제여부</th>
+      <th style="text-align: center">예약메모리</th>
+      <th style="text-align: center">삭제설정</th>
+      <th style="text-align: center">메모리</th>
+      <th style="text-align: center">테스트코드</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">단독</td>
+      <td style="text-align: center">t2.micro</td>
+      <td style="text-align: center">N</td>
+      <td style="text-align: center">25%</td>
+      <td style="text-align: center">TTL 설정된값만 삭제(기본설정)</td>
+      <td style="text-align: center">668.5MB</td>
+      <td style="text-align: center">RED_TST_01</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">단독</td>
+      <td style="text-align: center">t2.micro</td>
+      <td style="text-align: center">N</td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">TTL 설정된값만 삭제(기본설정)</td>
+      <td style="text-align: center">699.0MB</td>
+      <td style="text-align: center">RED_TST_02</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">단독</td>
+      <td style="text-align: center">t2.micro</td>
+      <td style="text-align: center">N</td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">랜덤삭제</td>
+      <td style="text-align: center">699.0MB</td>
+      <td style="text-align: center">RED_TST_03</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">복제</td>
+      <td style="text-align: center">t2.micro</td>
+      <td style="text-align: center">Y</td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">랜덤삭제</td>
+      <td style="text-align: center">699.0MB/635MB</td>
+      <td style="text-align: center">RED_TST_04</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">단독</td>
+      <td style="text-align: center">t2.medium</td>
+      <td style="text-align: center">N</td>
+      <td style="text-align: center">25%</td>
+      <td style="text-align: center">TTL 설정된값만 삭제(기본설정)</td>
+      <td style="text-align: center">3,174.4MB</td>
+      <td style="text-align: center">RED_TST_05</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">단독</td>
+      <td style="text-align: center">t2.medium</td>
+      <td style="text-align: center">N</td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">랜덤삭제</td>
+      <td style="text-align: center">3,557.5MB</td>
+      <td style="text-align: center">RED_TST_05</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="red_tst_01--t2micro--25--volatile-lfu-">RED_TST_01 ( t2.micro / 25% / volatile-lfu )</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"> </th>
+      <th style="text-align: right">발행개수</th>
+      <th style="text-align: right">누적개수</th>
+      <th style="text-align: right">시간(sec)</th>
+      <th style="text-align: right">캐시사용 메모리(MB)</th>
+      <th style="text-align: right">스왑(MB)</th>
+      <th style="text-align: right">잔여 메모리(MB)</th>
+      <th style="text-align: right">초당 발행개수</th>
+      <th style="text-align: left">비고</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">발행전</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">668.5</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: left">272Byte/Key</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">신규발행</td>
+      <td style="text-align: right">200,000</td>
+      <td style="text-align: right">200,000</td>
+      <td style="text-align: right">259</td>
+      <td style="text-align: right">83</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">583.6</td>
+      <td style="text-align: right">772</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">신규발행</td>
+      <td style="text-align: right">1,000,000</td>
+      <td style="text-align: right">1,000,000</td>
+      <td style="text-align: right">1,245</td>
+      <td style="text-align: right">387</td>
+      <td style="text-align: right">40.6</td>
+      <td style="text-align: right">279</td>
+      <td style="text-align: right">803</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">추가발행</td>
+      <td style="text-align: right">1,000,000</td>
+      <td style="text-align: right">1,060,498</td>
+      <td style="text-align: right">78</td>
+      <td style="text-align: right">416.2</td>
+      <td style="text-align: right">54.3</td>
+      <td style="text-align: right">250.7</td>
+      <td style="text-align: right">775</td>
+      <td style="text-align: left">OOM 발생 <br /> (volatile-lfu 설정,<br />TTL이 설정안된상태)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="red_tst_02--t2micro--0--volatile-lfu-">RED_TST_02 ( t2.micro / 0% / volatile-lfu )</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"> </th>
+      <th style="text-align: right">발행개수</th>
+      <th style="text-align: right">누적개수</th>
+      <th style="text-align: right">시간(sec)</th>
+      <th style="text-align: right">캐시사용 메모리(MB)</th>
+      <th style="text-align: right">스왑(MB)</th>
+      <th style="text-align: right">잔여 메모리(MB)</th>
+      <th style="text-align: right">초당 발행개수</th>
+      <th style="text-align: left">비고</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">발행전</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">699.0</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: left">272Byte/Key</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">신규발행</td>
+      <td style="text-align: right">1,800,000</td>
+      <td style="text-align: right">1,434,287</td>
+      <td style="text-align: right">410</td>
+      <td style="text-align: right">581</td>
+      <td style="text-align: right">82.9</td>
+      <td style="text-align: right">110</td>
+      <td style="text-align: right">3,414</td>
+      <td style="text-align: left">6 Thread<br />300,000개 등록</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">추가발행</td>
+      <td style="text-align: right">300,000</td>
+      <td style="text-align: right">1,434,986</td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: right">581</td>
+      <td style="text-align: right">95.2</td>
+      <td style="text-align: right">110</td>
+      <td style="text-align: right">699</td>
+      <td style="text-align: left">OOM 발생<br />(volatile-lfu 설정,<br />TTL이 설정안된상태)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="red_tst_03--t2micro--0--allkey-random-">RED_TST_03 ( t2.micro / 0% / allkey-random )</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"> </th>
+      <th style="text-align: right">발행개수</th>
+      <th style="text-align: right">누적개수</th>
+      <th style="text-align: right">시간(sec)</th>
+      <th style="text-align: right">캐시사용 메모리(MB)</th>
+      <th style="text-align: right">스왑(MB)</th>
+      <th style="text-align: right">잔여 메모리(MB)</th>
+      <th style="text-align: right">초당 발행개수</th>
+      <th style="text-align: left">비고</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">추가발행</td>
+      <td style="text-align: right">1,500,000</td>
+      <td style="text-align: right">1,432,361</td>
+      <td style="text-align: right">390</td>
+      <td style="text-align: right">581</td>
+      <td style="text-align: right">123</td>
+      <td style="text-align: right">132</td>
+      <td style="text-align: right">3672</td>
+      <td style="text-align: left">OOM 발생안함<br />(랜덤키삭제로 인한 손실우려)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="red_tst_04--t2micro--replica--0--allkey-random-">RED_TST_04 ( t2.micro / replica / 0% / allkey-random )</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"> </th>
+      <th style="text-align: right">발행개수</th>
+      <th style="text-align: right">누적개수</th>
+      <th style="text-align: right">시간(sec)</th>
+      <th style="text-align: right">캐시사용 메모리(MB)</th>
+      <th style="text-align: right">스왑(MB)</th>
+      <th style="text-align: right">잔여 메모리(MB)</th>
+      <th style="text-align: right">초당 발행개수</th>
+      <th style="text-align: left">비고</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">신규발행</td>
+      <td style="text-align: right">1,500,000</td>
+      <td style="text-align: right">1,429,286</td>
+      <td style="text-align: right">1,860</td>
+      <td style="text-align: right">554.8</td>
+      <td style="text-align: right">28.9</td>
+      <td style="text-align: right">121.5</td>
+      <td style="text-align: right">554.8</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">추가발행</td>
+      <td style="text-align: right">500,000</td>
+      <td style="text-align: right">1,429,078</td>
+      <td style="text-align: right">638</td>
+      <td style="text-align: right">554.8</td>
+      <td style="text-align: right">29.2</td>
+      <td style="text-align: right">121.5</td>
+      <td style="text-align: right">783</td>
+      <td style="text-align: left"> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="red_tst_05--t2medium-">RED_TST_05 ( t2.medium )</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"> </th>
+      <th style="text-align: right">발행개수</th>
+      <th style="text-align: right">누적개수</th>
+      <th style="text-align: right">시간(sec)</th>
+      <th style="text-align: right">캐시사용 메모리(MB)</th>
+      <th style="text-align: right">스왑(MB)</th>
+      <th style="text-align: right">잔여 메모리(MB)</th>
+      <th style="text-align: right">초당 발행개수</th>
+      <th style="text-align: left">비고</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">신규발행</td>
+      <td style="text-align: right">9,000,000</td>
+      <td style="text-align: right">6,438,368</td>
+      <td style="text-align: right">1,759</td>
+      <td style="text-align: right">2,475.7</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">1,076.4</td>
+      <td style="text-align: right">3,660</td>
+      <td style="text-align: left">예약메모리 25%<br />, volatile-lfu,<br />3174.4MB</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">신규발행</td>
+      <td style="text-align: right">9,000,000</td>
+      <td style="text-align: right">8,438,657</td>
+      <td style="text-align: right">1,560</td>
+      <td style="text-align: right">3,286.3</td>
+      <td style="text-align: right">3.4</td>
+      <td style="text-align: right">233.5</td>
+      <td style="text-align: right">5,409</td>
+      <td style="text-align: left">예약메모리 0%,<br />allkeys-random,<br />3,557.5MB</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>위 테스트를 해본결과 다음과 같이 요약해 보았습니다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>부하테스트 결과
+
+- 시스템에 맞는 인스턴스 사양(t2.micro 140만, t2.medium 843만)
+- Replica 구성시 Write / Read 분리정책 필요
+- Max Memory-policy 정책에 의한 데이터 삭제시 장애없는 시스템 구축(allkeys-random 추천)
+- eksehrrntjddlftl dPdirapahfl 0%
+</code></pre></div></div>
+
+<h2 id="마치며">마치며</h2>
+
+<blockquote>
+  <p>온프레미스 환경에서 레디스 설치시 서버의 성능을 받아서 처리되지만 AWS상에서 설정을 좀 다르다는걸 확인했습니다.   <br />
+보통 설명서를 잘 안읽어 보고 접근해서 적용했었는데 앞으로 설명서를 잘읽어야 겠다는 반성도 했고요.  <br />
+테스트를 하면서 불필요하다라고 생각하지 않았지만 원하는 결과가 도출이 안되었을때 후회를 좀 했었는데 이번테스트로 결과물을 얻고 정보공유를 할수 있어서 좋았습니다.<br />
+많이 부족한 글을 읽어 주셔서 감사합니다.</p>
+</blockquote>
+
+<h2 id="reference">Reference</h2>
+
+<ul>
+  <li>
+    <p>예약 메모리 비율(reserved-memory-percent )<br />
+ElastiCache(Redis) 클러스터에서 FailOver 발생 시 Master 노드의 메모리 덤프가 발생,<br />
+Redis는 메모리 덤프 시 메모리 공간 전체에 대해 locking 후 디스크에 기록하는 과정을 거치는데<br />
+ElastiCache에서는 할당된 예약 메모리 공간을 활용하여 요청되는 쓰기 작업들을 기록한다. <br />
+이때 요청되는 쓰기 수 보다 예약 메모리 공간이 적으면 해당 프로세스는 모두 실패가 되기 때문에
+서비스의 고가용성을 고려하여 예약메모리 사용비율을 적절하게 조정할 필요가 있다.<br />
+클러스터 구성이 아닌 상황에는 예약메모리가 사용될 경우가 없기 때문에 파라미터 그룹 옵션에서 예약메모리를 제거하는 것을 고려할 필요가 있다.</p>
+  </li>
+  <li>https://docs.aws.amazon.com/ko_kr/AmazonElastiCache/latest/red-ug/Replication.Redis.Groups.html</li>
+  <li>https://docs.aws.amazon.com/ko_kr/AmazonElastiCache/latest/red-ug/Replication.Redis-RedisCluster.html</li>
+  <li>https://aws.amazon.com/ko/premiumsupport/knowledge-center/oom-command-not-allowed-redis/</li>
+  <li>https://docs.aws.amazon.com/ko_kr/AmazonElastiCache/latest/red-ug/scaling-redis-cluster-mode-enabled.html</li>
+  <li>https://docs.aws.amazon.com/ko_kr/AmazonElastiCache/latest/red-ug/Strategies.html</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>!Warning : 작성자가 직접 ETOOS TechBlog에 작성한 게시물 내용입니다. 
+           게시물의 저작권은 ETOOS에 있습니다.
+</code></pre></div></div>
+
+    
+    
+    
+
+    
+</div>
+        
+        
+            
+<!-- <script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = 'https://connect.facebook.net/ko_KR/sdk.js#xfbml=1&version=v2.10&appId=1607605225977118';
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<script>window.twttr = (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0],
+        t = window.twttr || {};
+    if (d.getElementById(id)) return t;
+    js = d.createElement(s);
+    js.id = id;
+    js.src = "https://platform.twitter.com/widgets.js";
+    fjs.parentNode.insertBefore(js, fjs);
+    t._e = [];
+    t.ready = function(f) {
+        t._e.push(f);
+    };
+    return t;
+}(document, "script", "twitter-wjs"));</script>
+<section class="share transition">
+    <div class="share-twitter">
+        <a class="twitter-share-button" href="https://twitter.com/intent/tweet" data-size="large">Tweet</a>
+    </div>
+    <div class="share-facebook">
+        <div class="fb-share-button" data-href="http://localhost:4000/blog/7_ElasticCache_used/" data-layout="button_count" data-size="large" data-mobile-iframe="true">
+            <a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse">공유하기</a>
+        </div>
+    </div>
+</section> -->
+        
+
+    </main>
+      
+      <footer>
+    <address class="footer_wrap">
+        <div class="information">
+            <div class="myname">
+                ETOOS
+            </div>
+            <a href="mailto:etoostech@etoos.com" class="email">
+                etoostech@etoos.com
+            </a>
+            <!-- <div class="accounts">
+                <a href="http://dribbble.com/iamleejihye" target="_blank" class="transition">
+                    <svg viewBox="0 0 48.6 48.6">
+                    <path d="M24.3,0C10.9,0,0,10.9,0,24.3s10.9,24.3,24.3,24.3s24.3-10.9,24.3-24.3C48.7,10.9,37.8,0,24.3,0z M24.3,4.2
+                     c4.6,0,8.9,1.6,12.3,4.2c-2.4,3.2-5.8,5.6-10.1,7.5c-2.1-3.8-4.4-7.5-7.1-11C21,4.5,22.6,4.2,24.3,4.2z M15.3,6.4
+                     c2.7,3.5,5.1,7.2,7.2,10.9c-4.9,1.5-10.8,2.2-17.6,2.2C6.2,13.8,10.1,9,15.3,6.4z M4.2,24.3c0-0.2,0-0.3,0-0.5
+                     c7.8,0,14.5-0.9,20.2-2.7c0.5,1,0.9,1.9,1.4,2.9C19,26.2,13.3,30.6,8.9,37.2C6,33.7,4.2,29.2,4.2,24.3z M24.3,44.5
+                    c-4.7,0-8.9-1.6-12.3-4.3c4-6.3,9.1-10.3,15.4-12.2c1.9,4.9,3.3,10,4.1,15.1C29.3,44,26.9,44.5,24.3,44.5z M35.5,41.1
+                    c-0.9-4.8-2.2-9.4-3.9-14c3.8-0.5,8-0.4,12.6,0.4C43.3,33.1,40.1,38,35.5,41.1z M30,23.1c-0.5-1.1-1-2.3-1.6-3.4
+                    c4.7-2,8.5-4.8,11.3-8.3c2.7,3.2,4.5,7.3,4.7,11.8C39.2,22.4,34.4,22.3,30,23.1z"></path>
+                    </svg>
+                </a>
+            </div> -->
+        </div>
+        <div class="copyright">
+            <span>
+                &copy; ETOOS Tech Lab. <time datetime="2020-11-12 05:02:53 +0000">2020</time>
+                <!-- &copy; ETOOS All right reserved. <time datetime="2020-11-12 05:02:53 +0000">2020</time> -->
+            </span>
+        </div>    
+    </address>
+</footer>
+   
+  </body>
+</html>
